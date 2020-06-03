@@ -2,13 +2,11 @@
 
 `mkdir js-review && cd js-review && git init`
 
-`touch index.js index.html styles.css .gitignore`
-
-`echo 'node_modules' >> .gitignore`
+`touch index.js index.html styles.css`
 
 ## add axios
 
-`yarn add axios`
+`<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>`
 
 ## html setup
 
@@ -20,6 +18,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
     <link rel="stylesheet" href="styles.css" />
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   </head>
   <body>
     <h1>yo</h1>
@@ -31,5 +30,17 @@
 ## js setup
 
 ```javascript
-const axios = require("axios");
+axios
+  .get("http://dummy.restapiexample.com/api/v1/employees")
+  .then(function (response) {
+    // handle success
+    console.log(response);
+  })
+  .catch(function (error) {
+    // handle error
+    console.log(error);
+  })
+  .then(function () {
+    // always executed
+  });
 ```
