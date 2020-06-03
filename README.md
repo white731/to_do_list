@@ -1,7 +1,9 @@
 ## stetup project
 
 `mkdir js-review && cd js-review && git init`
+
 `touch index.js index.html styles.css .gitignore`
+
 `echo 'node_modules' >> .gitignore`
 
 ## add axios
@@ -24,4 +26,10 @@
   </body>
   <script src="index.js"></script>
 </html>
+```
+
+## js setup
+
+```javascript
+const axios = require("axios");
 ```
