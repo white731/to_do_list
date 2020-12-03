@@ -6,45 +6,78 @@
   errorOccured: false,
   errorMessage: "",
   errorStatus: "",
-  loadList: false,
   showListButton: true,
   printList: false,
+  loading:false,
+  completedLoading:false
 }
 
 
   const printList = () => {
     console.log ("list printed")
-    return `<div>This is like a list shining brightly</div>`
+    return state.list.map((item)=> 
+    `<div>
+    Item Title: ${item.title}
+    <p>
+    <label>
+      <input type="checkbox" class="filled-in" checked="${item.completed ? "checked":"unchecked"}" />
+      <span>Completed</span>
+    </label>
+    </p>
+    </div>`
+    )
+  }
+
+  const loading = () => {
+    return `Loading`
+  }
+
+  const error = () => {
+    return `
+    <div>
+    <h3>${state.errorMessage}</h4>
+    <h5>Error Code: ${state.errorStatus}</h5>
+    <a onclick = "loadList()" class="waves-effect green lighten-1 btn">Try Again</a>
+    </div>`
   }
 
   const loadList = () => {
-    state.loadList = true
-    
+    state.loading = true
+
     axios.get("https://jsonplaceholder.typicode.com/todos")
   .then(function (response) {
     // handle success
     console.log(response);
-    if (state.loadList){
-      state.list = response.data
-    }
-    
+    state.list = response.data
+    state.loading = false
+    state.errorOccured = false
+    state.completedLoading = true
+    state.printList = true
+    render()
   })
   .catch(function (error) {
     // handle error
     console.log(error);
     state.errorOccured = true;
+    state.loading = false
     state.errorMessage = error.message;
     state.errorStatus = error.response.status;
+    render()
   })
   .then(function () {
     // always executed
   });
 
+  if (state.loading){
+    render()
+  }
+  if (state.errorOccured) {
+    render()
+  }
+
   state.showListButton = false
-  state.printList = true
-  printList()
   render()
-    }
+}
 
 
   const render = () => {
@@ -58,6 +91,12 @@
     }
     if (state.printList) {
       htmlString += printList()
+    }
+    if (state.errorOccured) {
+      htmlString += error()
+    }
+    if (state.loading) {
+      htmlString += loading()
     }
     htmlString += `</div>`
     return document.getElementById("root").innerHTML  = htmlString
