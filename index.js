@@ -9,23 +9,71 @@
   showListButton: true,
   printList: false,
   loading:false,
-  completedLoading:false
+  completedLoading:false,
+  filterChecked:false,
+  filterUnChecked:false,
+  listToUse: []
 }
 
+  const filterChecked = () => {
+    state.filterUnChecked = false
+    state.filterChecked = true
+    render()
+
+  }
+
+  const filterUnChecked = () =>{
+    state.filterChecked = false
+    state.filterUnChecked = true
+    render()
+  }
+
+  const showAll = () => {
+    state.filterChecked = false
+    state.filterUnChecked = false
+    render()
+  }
+
+  const setCheckMarkValue = () =>{
+
+  }
+
+  const sortListbyTitle = () => {
+
+  }
 
   const printList = () => {
     console.log ("list printed")
-    return state.list.map((item)=> 
+    let htmlString = `
+    <a onclick = "filterChecked()" class="waves-effect green lighten-1 btn">Filter Checked</a>
+    <a onclick = "filterUnChecked()" class="waves-effect green lighten-1 btn">Filter UnChecked</a>
+    <a onclick = "showAll()" class="waves-effect green lighten-1 btn">Show All</a>
+    <br>
+    `
+   
+    if (state.filterChecked == true && state.filterUnChecked == false) {
+      state.listToUse = state.list.filter((item) => item.completed != false)
+    } else if (state.filterUnChecked == true && state.filterChecked == false) {
+      state.listToUse = state.list.filter((item) => item.completed != true)
+    } else {
+      state.listToUse = state.list
+    }
+
+    htmlString += state.listToUse.map((item)=> 
+    
     `<div>
-    Item Title: ${item.title}
+    <p>Item Title: ${item.title}</p>
+    <p>Item ID: ${item.id}</p>
+
     <p>
     <label>
-      <input type="checkbox" class="filled-in" checked="${item.completed ? "checked":"unchecked"}" />
-      <span>Completed</span>
+      <input id=${item.id} type="checkbox" class="filled-in" ${item.completed ? "checked":""}/>
+      <span>${item.completed}</span>
     </label>
     </p>
     </div>`
     )
+    return htmlString
   }
 
   const loading = () => {
@@ -36,7 +84,6 @@
     return `
     <div>
     <h3>${state.errorMessage}</h4>
-    <h5>Error Code: ${state.errorStatus}</h5>
     <a onclick = "loadList()" class="waves-effect green lighten-1 btn">Try Again</a>
     </div>`
   }
@@ -58,10 +105,13 @@
   .catch(function (error) {
     // handle error
     console.log(error);
+    
+    state.printList = false
+    state.loading = false
     state.errorOccured = true;
     state.loading = false
     state.errorMessage = error.message;
-    state.errorStatus = error.response.status;
+    // state.errorStatus = error.response.status;
     render()
   })
   .then(function () {
@@ -81,7 +131,6 @@
 
 
   const render = () => {
-    let root = document.getElementById("root").innerHTML
     let htmlString = `<div class = container>`
     htmlString += `
     <h1>${state.websiteTitle}</h1>
@@ -91,7 +140,7 @@
     }
     if (state.printList) {
       htmlString += printList()
-    }
+    } 
     if (state.errorOccured) {
       htmlString += error()
     }
